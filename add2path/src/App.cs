@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 
 namespace add2path;
@@ -9,8 +8,8 @@ namespace add2path;
 public class App {
 
     private const string MENU_NAME = "添加到PATH";
-    private const string INSTALL_CMD = "-add2PATH";
-    private const string UNINSTALL_CMD = "-removeFromPATH";
+    private const string INSTALL_CMD = "-add2Regedit";
+    private const string UNINSTALL_CMD = "-removeFromRegedit";
 
     private readonly FileInfo iconFile;
     private readonly FileInfo exeFile;

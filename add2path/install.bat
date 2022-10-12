@@ -1,1 +1,1 @@
-add2path.exe -add2PATH
+add2path.exe -add2Regedit

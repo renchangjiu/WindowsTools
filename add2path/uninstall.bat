@@ -1,1 +1,1 @@
-add2path.exe -removeFromPATH
+add2path.exe -removeFromRegedit
