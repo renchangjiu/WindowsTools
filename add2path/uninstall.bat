@@ -1,1 +1,0 @@
-add2path.exe -removeFromRegedit
