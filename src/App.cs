@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 
 namespace win_rcmts;
 
-public class App {
+public static class App {
 
-    private const string MENU_NAME = "添加到PATH";
     private const string INSTALL_CMD = "-add2Regedit";
     private const string UNINSTALL_CMD = "-removeFromRegedit";
 
-    private readonly FileInfo iconFile;
-    private readonly FileInfo exeFile;
+    private static List<ITool> tools;
+
 
     public static void Main(string[] args) {
         try {
@@ -21,71 +19,63 @@ public class App {
                 return;
             }
 
-            string param = args[0];
-            var app = new App();
-            switch (param) {
+            string direct = args[0];
+            tools = new List<ITool>();
+            tools.Add(new AddPath());
+            tools.Add(new CopyFilePath());
+            // ...
+
+            switch (direct) {
                 case INSTALL_CMD:
-                    app.addRightClickMenu();
+                    addRightClickMenu();
                     break;
                 case UNINSTALL_CMD:
-                    app.removeRightClickMenu();
+                    removeRightClickMenu();
                     break;
                 default:
-                    app.addOrDeletePath(param);
+                    invokeTool(direct, args[1]);
                     break;
             }
-
-            Thread.Sleep(1000);
         } catch (Exception e) {
             Console.WriteLine(e);
         }
     }
 
-    private App() {
-        iconFile = new FileInfo(Environment.CurrentDirectory + "/app.ico");
-        exeFile = new FileInfo(Environment.CurrentDirectory + "/add2path.exe");
-    }
 
-    private void addRightClickMenu() {
-        string cmd = $"\"{exeFile.FullName}\" \"%v\"";
-        RegeditUtil.add(MenuType.Directory, MENU_NAME, iconFile, cmd);
-        RegeditUtil.add(MenuType.Background, MENU_NAME, iconFile, cmd);
-        Console.WriteLine("添加到右键菜单成功");
-    }
-
-    private void removeRightClickMenu() {
-        RegeditUtil.remove(MenuType.Directory, MENU_NAME);
-        RegeditUtil.remove(MenuType.Background, MENU_NAME);
-        Console.WriteLine("删除右键菜单成功");
-    }
-
-    private void addOrDeletePath(string path) {
-        Console.WriteLine("正在读取Path......");
-        string? oldPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
-        // Console.WriteLine(oldPath);
-        // Environment.SetEnvironmentVariable("Path_Bak", oldPath, EnvironmentVariableTarget.User);
-        string[] paths = oldPath.Split(";");
-        HashSet<string> set = new();
-        foreach (var item in paths) {
-            if (!string.IsNullOrWhiteSpace(item)) {
-                set.Add(item);
+    private static void addRightClickMenu() {
+        string exe = Environment.CurrentDirectory + "/win-rcmts.exe";
+        foreach (var tool in tools) {
+            string direct = tool.getDirect();
+            string cmd = $"\"{exe}\" {direct} \"%v\"";
+            MenuType[] types = tool.GetMenuTypes();
+            foreach (var type in types) {
+                RegeditUtil.add(type, tool.getMenuName(), tool.getIconPath(), cmd);
             }
         }
 
-        // 已存在则移除, 否则加入
-        if (set.Contains(path)) {
-            set.Remove(path);
-            Console.WriteLine($"已从Path中删除 {path}");
-        } else {
-            set.Add(path);
-            Console.WriteLine($"已添加 {path} 到Path");
-        }
-
-        Console.WriteLine("正在修改Path......");
-        string newPath = string.Join(";", set);
-        Environment.SetEnvironmentVariable("Path", newPath, EnvironmentVariableTarget.User);
-        Console.WriteLine("Completed.");
+        Console.WriteLine("添加到右键菜单成功");
+        Thread.Sleep(1000);
     }
 
+    private static void removeRightClickMenu() {
+        foreach (var tool in tools) {
+            MenuType[] types = tool.GetMenuTypes();
+            foreach (var type in types) {
+                RegeditUtil.remove(type, tool.getMenuName());
+            }
+        }
+
+        Console.WriteLine("删除右键菜单成功");
+        Thread.Sleep(1000);
+    }
+
+    private static void invokeTool(string direct, string param) {
+        foreach (var tool in tools) {
+            if (direct.Equals(tool.getDirect())) {
+                tool.run(param);
+                break;
+            }
+        }
+    }
 
 }

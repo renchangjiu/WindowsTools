@@ -9,13 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="resources\app.ico">
+      <None Update="resources\app2.ico">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="install.bat">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="uninstall.bat">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\app1.ico">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

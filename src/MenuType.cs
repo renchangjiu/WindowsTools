@@ -7,7 +7,7 @@ public class MenuType {
     public static readonly MenuType Background = new MenuType(@"Directory\Background\shell");
 
 
-    public string regeditPath;
+    public readonly string regeditPath;
 
     private MenuType(string regeditPath) {
         this.regeditPath = regeditPath;

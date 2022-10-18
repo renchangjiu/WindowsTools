@@ -1,15 +1,14 @@
-﻿using System.IO;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace win_rcmts;
 
 public static class RegeditUtil {
 
-    public static void add(MenuType type, string menuName, FileInfo icon, string command) {
+    public static void add(MenuType type, string menuName, string iconPath, string command) {
         RegistryKey shellKey = getShellKey(type);
 
         RegistryKey menuKey = shellKey.CreateSubKey(menuName, true);
-        menuKey.SetValue("icon", icon.FullName, RegistryValueKind.String);
+        menuKey.SetValue("icon", iconPath, RegistryValueKind.String);
         RegistryKey cmdKey = menuKey.CreateSubKey("command", true);
         cmdKey.SetValue("", command, RegistryValueKind.String);
         menuKey.Close();

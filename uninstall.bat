@@ -1,1 +1,1 @@
-add2path.exe -removeFromRegedit
+win-rcmts.exe -removeFromRegedit

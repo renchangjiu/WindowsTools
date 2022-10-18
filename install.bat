@@ -1,1 +1,1 @@
-add2path.exe -add2Regedit
+win-rcmts.exe -add2Regedit
